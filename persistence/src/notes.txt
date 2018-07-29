@@ -1,0 +1,16 @@
+filesystem root -> file -> Song
+                        -> hash
+                        -> Album
+                        -> Artist
+                        -> Playlist
+
+
+File properties
+directory relative to root
+hash
+filename
+type flac/mp3
+
+1. scan all the files in filesystem roots
+2. for each file determine if artist exists? if so link to that artist
+3. "" album exists, if so, link
