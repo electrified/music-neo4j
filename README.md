@@ -10,7 +10,7 @@ This is a Java 10/Gradle/Spring Boot/Spring Data project built to improve my und
 
 This is a work in progress so there are hardcoded paths in the code which you will need to change
 
-##TODO
+## TODO
 
 - Add real web interface with search ability
 - Remove hardcoded paths/ dummy credentials
