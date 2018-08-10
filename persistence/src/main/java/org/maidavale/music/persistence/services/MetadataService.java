@@ -104,14 +104,14 @@ public class MetadataService {
         }
     }
 
-    private void constructTrackFromId3(ID3v1 id3, Mp3File file, Track t) {
-        System.out.println("Track: " + id3.getTrack());
-        System.out.println("Artist: " + id3.getArtist());
-        System.out.println("Title: " + id3.getTitle());
-        System.out.println("Album: " + id3.getAlbum());
-        System.out.println("Year: " + id3.getYear());
-        System.out.println("Genre: " + id3.getGenre() + " (" + id3.getGenreDescription() + ")");
-        System.out.println("Comment: " + id3.getComment());
+    private void constructTrackFromId3(final ID3v1 id3, final Mp3File file, final Track t) {
+        LOG.info("Track: {}", id3.getTrack());
+        LOG.info("Artist: {}", id3.getArtist());
+        LOG.info("Title: {}", id3.getTitle());
+        LOG.info("Album: {}", id3.getAlbum());
+        LOG.info("Year: {}", id3.getYear());
+        LOG.info("Genre: {} ({})", id3.getGenre(), id3.getGenreDescription());
+        LOG.info("Comment: {}", id3.getComment());
 
         if (id3.getTitle() != null) {
             t.setTitle(id3.getTitle().trim());
@@ -163,7 +163,7 @@ public class MetadataService {
         return new Artist(trimmedTitle);
     }
 
-    private void populateFileMetadataAndCreateTracksForFiles(Iterable<AudioFile> files) {
+    private void populateFileMetadataAndCreateTracksForFiles(final Iterable<AudioFile> files) {
         Streams.stream(files)
                 .map(this::populateFileMetadata)
                 .forEach(audioFileService::updateFile);

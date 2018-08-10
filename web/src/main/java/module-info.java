@@ -12,4 +12,8 @@ module org.maidavale.music.web {
     requires spring.data.commons;
     requires commons.lang3;
     requires org.maidavale.music.persistence;
+    requires org.apache.commons.io;
+    requires tomcat.embed.core;
+    requires spring.security.config;
+    requires spring.beans;
 }

@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class AudioFileService {
@@ -99,5 +100,9 @@ public class AudioFileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Optional<AudioFile> getFileById(Long id) {
+        return audioFileRepository.findById(id);
     }
 }
