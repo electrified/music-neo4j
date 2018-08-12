@@ -8,7 +8,9 @@ module org.maidavale.music.persistence {
     requires spring.context;
     requires org.neo4j.ogm.core;
     requires spring.data.commons;
-    requires commons.lang3;
+//    requires commons.lang3;
+    requires org.neo4j.graphdb;
+    requires org.neo4j.kernel;
     exports org.maidavale.music.persistence.domain;
     exports org.maidavale.music.persistence.repositories;
     exports org.maidavale.music.persistence.services;

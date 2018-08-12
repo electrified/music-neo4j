@@ -22,35 +22,8 @@ public class SearchController {
         this.metadataService = metadataService;
     }
 
-    @RequestMapping("/user")
-    public Principal user(Principal user) {
-        return user;
-    }
-
-
     @RequestMapping("/search")
     public Collection<Track> search( @RequestParam(value="query") final String query) {
         return audioFileService.search(query);
-    }
-
-    @RequestMapping("scan")
-    public void scanFiles() {
-//        audioFileService.importAudio("/srv/music/Additions/beatport/");
-        audioFileService.importAudio("/srv/music");
-    }
-
-    @RequestMapping("delete")
-    public void delete() {
-        audioFileService.deleteAudioFiles();
-    }
-
-    @RequestMapping("deletemeta")
-    public void deleteMetadata() {
-        metadataService.deleteMetadata();
-    }
-
-    @RequestMapping("meta")
-    public void updateMetadata() {
-        metadataService.displayMetadata();
     }
 }
