@@ -1,11 +1,12 @@
 dependencies {
-    compile ('org.springframework.boot:spring-boot-starter-data-neo4j:2.0.3.RELEASE') {
+    compile ("org.springframework.boot:spring-boot-starter-data-neo4j:$rootProject.ext.springVersion") {
         exclude group:'javax.annotation', module: 'javax.annotation-api'
         exclude group:'org.springframework.boot', module: 'spring-boot-starter-tomcat'
     }
-    compile 'org.neo4j.driver:neo4j-java-driver:1.4.4'
+    compile 'org.neo4j.driver:neo4j-java-driver:1.6.3'
+
     compile 'com.mpatric:mp3agic:0.9.1'
-    compile (group: 'com.google.guava', name: 'guava', version: '25.1-jre') {
+    compile (group: 'com.google.guava', name: 'guava', version: '26.0-jre') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
     }
 
@@ -13,13 +14,3 @@ dependencies {
 }
 
 ext.moduleName = 'org.maidavale.music.persistence'
-
-compileJava {
-    inputs.property("moduleName", moduleName)
-    doFirst {
-        options.compilerArgs = [
-                '--module-path', classpath.asPath,
-        ]
-        classpath = files()
-    }
-}

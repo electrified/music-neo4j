@@ -35,8 +35,8 @@ public class SearchController {
 
     @RequestMapping("scan")
     public void scanFiles() {
-//        audioFileService.importAudio("/srv/music/Additions/beatport/");
-        audioFileService.importAudio("/srv/music");
+        audioFileService.importAudio("/srv/music/Additions/beatport/");
+//        audioFileService.importAudio("/srv/music");
     }
 
     @RequestMapping("delete")

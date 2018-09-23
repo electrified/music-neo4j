@@ -42,7 +42,7 @@ public class PlaybackController {
 
         response.setContentType(mimeType);
 
-        response.setHeader("Content-Disposition", String.format("inline; filename=\"" + id + "\""));
+        response.setHeader("Content-Disposition", String.format("inline; filename=\"%d\"", id));
 
 //        response.setContentLength((int) path.length());
 

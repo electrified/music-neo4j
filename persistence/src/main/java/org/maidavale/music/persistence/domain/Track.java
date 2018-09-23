@@ -15,10 +15,10 @@ public class Track {
     private Long id;
     private String track;
     @Relationship(type = "BY")
-    private Set<Artist> artist = new HashSet<>();;
+    private Set<Artist> artist = new HashSet<>();
     private String title;
     @Relationship(type = "APPEARS_ON")
-    private Set<Release> release = new HashSet<>();;
+    private Set<Release> release = new HashSet<>();
     private String year;
     private String genre;
     private String comment;

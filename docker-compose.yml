@@ -1,0 +1,15 @@
+version: '3'
+services:
+#  web:
+#    build: .
+#    ports:
+#    - "5000:5000"
+  neo4j:
+    image: "neo4j:3.4"
+    ports:
+    - "7474:7474"
+    - "7687:7687"
+    volumes:
+      - "./data:$HOME/neo4j/data"
+    environment:
+      - NEO4J_AUTH=none
