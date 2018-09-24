@@ -1,16 +1,20 @@
 package org.maidavale.music.web;
 
+import org.maidavale.music.persistence.domain.Source;
 import org.maidavale.music.persistence.services.AudioFileService;
 import org.maidavale.music.persistence.services.MetadataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
-//@PreAuthorize("hasRole('ADMIN')")
-@CrossOrigin(origins = "*")
+@PreAuthorize("hasRole('ADMIN')")
+//@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@RequestMapping("/admin")
 public class AdminController {
     private final AudioFileService audioFileService;
     private final MetadataService metadataService;
@@ -44,5 +48,10 @@ public class AdminController {
     @PostMapping("meta")
     public void updateMetadata() {
         metadataService.displayMetadata();
+    }
+
+    @RequestMapping("/sources")
+    public Iterable<Source> listSources() {
+        return audioFileService.getSources();
     }
 }

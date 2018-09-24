@@ -83,11 +83,7 @@ public class AudioFileService {
 
         final PathMatcher filter = documentRootPath.getFileSystem().getPathMatcher("glob:**.{mp3,wav,flac,ogg}");
 
-        Source src = null;
-        try {
-            src = sourceRepository.findByPath(documentRootPath.toString());
-        } catch (NullPointerException e) {
-        }
+        Source src = sourceRepository.findByPath(documentRootPath.toString());
 
         if (src == null) {
             src = sourceRepository.save(new Source(documentRootPath.toString()));
@@ -108,5 +104,17 @@ public class AudioFileService {
 
     public Optional<AudioFile> getFileById(Long id) {
         return audioFileRepository.findById(id);
+    }
+
+    public Iterable<Source> getSources() {
+        return sourceRepository.findAll();
+    }
+
+    public Iterable<AudioFile> getFilesBySource(final Long id) {
+        Optional<Source> source = sourceRepository.findById(id);
+        if (source.isPresent()) {
+            return audioFileRepository.findBySourceEquals(source.get());
+        }
+        return null;
     }
 }
