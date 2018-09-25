@@ -29,10 +29,25 @@ public class AdminController {
         return user;
     }
 
-    @PostMapping("scan")
-    public ResponseEntity scanFiles(@RequestParam("path") String pathToScan) {
-        audioFileService.importAudio(pathToScan);
-        return new ResponseEntity(pathToScan, HttpStatus.OK);
+    @RequestMapping("/sources")
+    public Iterable<Source> listSources() {
+        return audioFileService.getSources();
+    }
+
+    @PostMapping("sources")
+    public ResponseEntity addSource(@RequestBody Source source) {
+        return new ResponseEntity(audioFileService.addSource(source.getPath()), HttpStatus.OK);
+    }
+
+    @PostMapping("sources/{sourceId}/scan")
+    public ResponseEntity scanFiles(@PathVariable("sourceId") Long sourceId) {
+        audioFileService.importAudio(sourceId);
+        return new ResponseEntity(sourceId, HttpStatus.OK);
+    }
+
+    @PostMapping("sources/{sourceId}/metadata")
+    public void updateMetadata(@PathVariable("sourceId") Long sourceId) {
+        metadataService.populateMetadata(sourceId);
     }
 
     @PostMapping("delete")
@@ -43,15 +58,5 @@ public class AdminController {
     @PostMapping("deletemeta")
     public void deleteMetadata() {
         metadataService.deleteMetadata();
-    }
-
-    @PostMapping("meta")
-    public void updateMetadata() {
-        metadataService.displayMetadata();
-    }
-
-    @RequestMapping("/sources")
-    public Iterable<Source> listSources() {
-        return audioFileService.getSources();
     }
 }

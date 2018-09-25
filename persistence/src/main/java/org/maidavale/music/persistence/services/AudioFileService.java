@@ -78,25 +78,30 @@ public class AudioFileService {
         return documentRoot.relativize(audioFile).toString();
     }
 
-    public void importAudio(final String pathToScan) {
-        final var documentRootPath = Paths.get(pathToScan);
-
-        final PathMatcher filter = documentRootPath.getFileSystem().getPathMatcher("glob:**.{mp3,wav,flac,ogg}");
-
+    public Source addSource(final String path) {
+        final var documentRootPath = Paths.get(path);
         Source src = sourceRepository.findByPath(documentRootPath.toString());
 
         if (src == null) {
             src = sourceRepository.save(new Source(documentRootPath.toString()));
             LOG.info("Saved source {}", src);
         }
+        return src;
+    }
+
+    public void importAudio(final Long sourceId) {
+        Source src = sourceRepository.findById(sourceId).get();
+
+        final var documentRootPath = Paths.get(src.getPath());
+
+        final PathMatcher filter = documentRootPath.getFileSystem().getPathMatcher("glob:**.{mp3,wav,flac,ogg}");
 
         try {
-            Source finalSrc = src;
             Files.walk(documentRootPath, FileVisitOption.FOLLOW_LINKS)
 //                    .parallel()
                     .filter(Files::isRegularFile)
                     .filter(filter::matches)
-                    .forEach(f -> addFile(finalSrc, calculateRelativePath(documentRootPath, f)));
+                    .forEach(f -> addFile(src, calculateRelativePath(documentRootPath, f)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -110,8 +115,9 @@ public class AudioFileService {
         return sourceRepository.findAll();
     }
 
-    public Iterable<AudioFile> getFilesBySource(final Long id) {
-        Optional<Source> source = sourceRepository.findById(id);
+
+    public Iterable<AudioFile> getAudioFilesBySource(final Long sourceId) {
+        Optional<Source> source = sourceRepository.findById(sourceId);
         if (source.isPresent()) {
             return audioFileRepository.findBySourceEquals(source.get());
         }

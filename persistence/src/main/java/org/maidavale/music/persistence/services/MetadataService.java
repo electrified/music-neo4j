@@ -169,7 +169,7 @@ public class MetadataService {
                 .forEach(audioFileService::updateFile);
     }
 
-    public void displayMetadata() {
-        populateFileMetadataAndCreateTracksForFiles(audioFileService.getAudioFiles());
+    public void populateMetadata(final Long sourceId) {
+        populateFileMetadataAndCreateTracksForFiles(audioFileService.getAudioFilesBySource(sourceId));
     }
 }
