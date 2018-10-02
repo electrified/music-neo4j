@@ -1,8 +1,11 @@
-package org.maidavale.music.web;
+package org.maidavale.music.web.controllers;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.maidavale.music.persistence.domain.AudioFile;
 import org.maidavale.music.persistence.domain.Source;
 import org.maidavale.music.persistence.services.AudioFileService;
 import org.maidavale.music.persistence.services.MetadataService;
+import org.maidavale.music.web.entities.SuccessfulResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,13 +22,13 @@ public class AdminController {
     private final AudioFileService audioFileService;
     private final MetadataService metadataService;
 
-    public AdminController(AudioFileService audioFileService, MetadataService metadataService) {
+    public AdminController(final AudioFileService audioFileService, final MetadataService metadataService) {
         this.audioFileService = audioFileService;
         this.metadataService = metadataService;
     }
 
     @RequestMapping("/user")
-    public Principal user(Principal user) {
+    public Principal user(final Principal user) {
         return user;
     }
 
@@ -35,19 +38,30 @@ public class AdminController {
     }
 
     @PostMapping("sources")
-    public ResponseEntity addSource(@RequestBody Source source) {
+    public ResponseEntity addSource(@RequestBody final Source source) {
         return new ResponseEntity(audioFileService.addSource(source.getPath()), HttpStatus.OK);
     }
 
+    @DeleteMapping("sources/{sourceId}")
+    public ResponseEntity deleteSource(@PathVariable("sourceId") final Long sourceId) {
+        throw new NotImplementedException("todo");
+    }
+
     @PostMapping("sources/{sourceId}/scan")
-    public ResponseEntity scanFiles(@PathVariable("sourceId") Long sourceId) {
+    public ResponseEntity scanFiles(@PathVariable("sourceId") final Long sourceId) {
         audioFileService.importAudio(sourceId);
         return new ResponseEntity(sourceId, HttpStatus.OK);
     }
 
     @PostMapping("sources/{sourceId}/metadata")
-    public void updateMetadata(@PathVariable("sourceId") Long sourceId) {
+    public ResponseEntity updateMetadata(@PathVariable("sourceId") final Long sourceId) {
         metadataService.populateMetadata(sourceId);
+        return new ResponseEntity(new SuccessfulResponse(sourceId.toString()), HttpStatus.OK);
+    }
+
+    @GetMapping("sources/{sourceId}/files")
+    public Iterable<AudioFile> getFiles(@PathVariable("sourceId") final Long sourceId) {
+        return audioFileService.getAudioFilesBySource(sourceId);
     }
 
     @PostMapping("delete")
@@ -57,6 +71,6 @@ public class AdminController {
 
     @PostMapping("deletemeta")
     public void deleteMetadata() {
-        metadataService.deleteMetadata();
+        metadataService.deleteAllMetadata();
     }
 }

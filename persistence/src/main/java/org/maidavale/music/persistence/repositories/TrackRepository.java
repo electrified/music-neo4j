@@ -8,4 +8,7 @@ import java.util.Collection;
 
 public interface TrackRepository extends Neo4jRepository<Track, Long> {
     Collection<Track> findByTitleLike(@Param("title") final String title);
+    Collection<Track> findTrackByArtistContainingOrTitleContainingOrGenreContaining(@Param("artist") final String artist,
+                                                                                    @Param("title") final String title,
+                                                                                    @Param("genre") final String genre);
 }

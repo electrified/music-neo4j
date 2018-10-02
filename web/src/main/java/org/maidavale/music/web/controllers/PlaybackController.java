@@ -1,6 +1,5 @@
-package org.maidavale.music.web;
+package org.maidavale.music.web.controllers;
 
-import org.apache.commons.io.IOUtils;
 import org.maidavale.music.persistence.services.AudioFileService;
 import org.maidavale.music.persistence.services.MetadataService;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,9 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLConnection;
 import java.nio.file.Paths;
+
+import static java.net.URLConnection.*;
+import static org.apache.commons.io.IOUtils.copy;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -22,25 +22,23 @@ public class PlaybackController {
     private final AudioFileService audioFileService;
     private final MetadataService metadataService;
 
-    public PlaybackController(AudioFileService audioFileService, MetadataService metadataService) {
+    public PlaybackController(final AudioFileService audioFileService, final MetadataService metadataService) {
         this.audioFileService = audioFileService;
         this.metadataService = metadataService;
     }
 
     @RequestMapping(value ="/play/{id}", produces = "audio/*")
-    public void play(@PathVariable(value="id") final Long id, HttpServletResponse response) throws IOException {
+    public void play(@PathVariable(value="id") final Long id, final HttpServletResponse response) throws IOException {
         var audioFile =  audioFileService.getFileById(id);
 
         final var path = Paths.get(audioFile.get().getSource().getPath() + "/" + audioFile.get().getRelativePath());
 
-        String mimeType = URLConnection.guessContentTypeFromName(path.toString());
+        String mimeType = guessContentTypeFromName(path.toString());
         if (mimeType == null) {
             //unknown mimetype so set the mimetype to application/octet-stream
             mimeType = "application/octet-stream";
         }
 
-
-        InputStream inputStream = new BufferedInputStream(new FileInputStream(path.toString()));
 
         response.setContentType(mimeType);
 
@@ -48,7 +46,7 @@ public class PlaybackController {
 
 //        response.setContentLength((int) path.length());
 
-        IOUtils.copy(inputStream, response.getOutputStream());
+        copy(new BufferedInputStream(new FileInputStream(path.toString())), response.getOutputStream());
         response.flushBuffer();
     }
 }

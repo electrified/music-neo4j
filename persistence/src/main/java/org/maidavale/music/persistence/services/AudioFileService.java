@@ -2,7 +2,6 @@ package org.maidavale.music.persistence.services;
 
 import org.maidavale.music.persistence.domain.AudioFile;
 import org.maidavale.music.persistence.domain.Source;
-import org.maidavale.music.persistence.domain.Track;
 import org.maidavale.music.persistence.repositories.AudioFileRepository;
 import org.maidavale.music.persistence.repositories.SourceRepository;
 import org.maidavale.music.persistence.repositories.TrackRepository;
@@ -11,12 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
-import java.util.Collection;
+import java.nio.file.*;
 import java.util.Optional;
 
 @Service
@@ -28,16 +22,16 @@ public class AudioFileService {
     private final SourceRepository sourceRepository;
     private final TrackRepository trackRepository;
 
-    public AudioFileService(AudioFileRepository audioFileRepository, SourceRepository sourceRepository, TrackRepository trackRepository) {
+    public AudioFileService(final AudioFileRepository audioFileRepository, final SourceRepository sourceRepository, final TrackRepository trackRepository) {
         this.audioFileRepository = audioFileRepository;
         this.sourceRepository = sourceRepository;
         this.trackRepository = trackRepository;
     }
 
     private void addFile(final Source documentRoot, final String audioFile) {
-        var existingFile = audioFileRepository.findBySourceAndRelativePath(documentRoot, audioFile);
+        var existingFiles = audioFileRepository.findBySourceAndRelativePath(documentRoot.getId(), audioFile);
 
-        if (existingFile == null) {
+        if (existingFiles.size() == 0) {
             final var audioFileNode = new AudioFile(documentRoot, audioFile);
             LOG.info("adding {}", audioFile);
             audioFileRepository.save(audioFileNode);
@@ -70,11 +64,7 @@ public class AudioFileService {
         return audioFileRepository.findAll();
     }
 
-    public Collection<Track> search(String searchCriteria) {
-        return trackRepository.findByTitleLike(searchCriteria);
-    }
-
-    private String calculateRelativePath(Path documentRoot, Path audioFile) {
+    private String calculateRelativePath(final Path documentRoot, final Path audioFile) {
         return documentRoot.relativize(audioFile).toString();
     }
 
@@ -107,7 +97,7 @@ public class AudioFileService {
         }
     }
 
-    public Optional<AudioFile> getFileById(Long id) {
+    public Optional<AudioFile> getFileById(final Long id) {
         return audioFileRepository.findById(id);
     }
 
@@ -115,12 +105,7 @@ public class AudioFileService {
         return sourceRepository.findAll();
     }
 
-
     public Iterable<AudioFile> getAudioFilesBySource(final Long sourceId) {
-        Optional<Source> source = sourceRepository.findById(sourceId);
-        if (source.isPresent()) {
-            return audioFileRepository.findBySourceEquals(source.get());
-        }
-        return null;
+        return audioFileRepository.findBySource(sourceId);
     }
 }

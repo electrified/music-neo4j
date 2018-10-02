@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collection;
 
 @Service
 public class MetadataService {
@@ -29,20 +30,20 @@ public class MetadataService {
     private final TrackRepository trackRepository;
     private final ArtistRepository artistRepository;
 
-    public MetadataService(AudioFileService audioFileService, ReleaseRepository releaseRepository, TrackRepository trackRepository, ArtistRepository artistRepository) {
+    public MetadataService(final AudioFileService audioFileService, final ReleaseRepository releaseRepository, final TrackRepository trackRepository, final ArtistRepository artistRepository) {
         this.audioFileService = audioFileService;
         this.releaseRepository = releaseRepository;
         this.trackRepository = trackRepository;
         this.artistRepository = artistRepository;
     }
 
-    public void deleteMetadata() {
+    public void deleteAllMetadata() {
         trackRepository.deleteAll();
         releaseRepository.deleteAll();
         artistRepository.deleteAll();
     }
 
-    private AudioFile populateFileMetadata(AudioFile file) {
+    private AudioFile populateFileMetadata(final AudioFile file) {
         LOG.info("Analysing file {}", file);
         if (file.getRelativePath().endsWith("mp3")) {
             analyseMp3(file);
@@ -72,27 +73,7 @@ public class MetadataService {
 
             var t = file.getTrack() != null ? file.getTrack() : new Track();
 
-            ID3v1 tag = null;
-
-            if (mp3file.hasId3v1Tag() && mp3file.hasId3v2Tag()) {
-                ID3v2 id3v2Tag = mp3file.getId3v2Tag();
-                ID3v1 id3v1Tag = mp3file.getId3v1Tag();
-
-                if (id3v2Tag.getTitle() == null) {
-                    LOG.info("Using ID3 v1");
-                    tag = id3v1Tag;
-                } else  if (id3v1Tag.getTitle() == null){
-                    LOG.info("Using ID3 v2");
-                    tag = id3v2Tag;
-                } else {
-                    tag = id3v2Tag.getTitle().length() >= id3v1Tag.getTitle().length() ? id3v2Tag : id3v1Tag;
-                }
-            } else if(mp3file.hasId3v1Tag()) {
-                tag = mp3file.getId3v1Tag();
-
-            } else if(mp3file.hasId3v2Tag()) {
-                tag = mp3file.getId3v2Tag();
-            }
+            var tag = getTagFromFile(mp3file);
 
             if (tag != null) {
                 constructTrackFromId3(tag, mp3file, t);
@@ -102,6 +83,30 @@ public class MetadataService {
         } catch (IOException | UnsupportedTagException | InvalidDataException | IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
+    }
+
+    private static ID3v1 getTagFromFile(Mp3File mp3file) {
+        ID3v1 tag = null;
+        if (mp3file.hasId3v1Tag() && mp3file.hasId3v2Tag()) {
+            ID3v2 id3v2Tag = mp3file.getId3v2Tag();
+            ID3v1 id3v1Tag = mp3file.getId3v1Tag();
+
+            if (id3v2Tag.getTitle() == null) {
+                LOG.info("Using ID3 v1");
+                tag = id3v1Tag;
+            } else  if (id3v1Tag.getTitle() == null){
+                LOG.info("Using ID3 v2");
+                tag = id3v2Tag;
+            } else {
+                tag = id3v2Tag.getTitle().length() >= id3v1Tag.getTitle().length() ? id3v2Tag : id3v1Tag;
+            }
+        } else if(mp3file.hasId3v1Tag()) {
+            tag = mp3file.getId3v1Tag();
+
+        } else if(mp3file.hasId3v2Tag()) {
+            tag = mp3file.getId3v2Tag();
+        }
+        return tag;
     }
 
     private void constructTrackFromId3(final ID3v1 id3, final Mp3File file, final Track t) {
@@ -114,30 +119,30 @@ public class MetadataService {
         LOG.info("Comment: {}", id3.getComment());
 
         if (id3.getTitle() != null) {
-            t.setTitle(id3.getTitle().trim());
+            t.setTitle(id3.getTitle().strip());
         }
 
         if (id3.getGenreDescription() != null) {
-            t.setGenre(id3.getGenreDescription().trim());
+            t.setGenre(id3.getGenreDescription().strip());
         }
 
         if (id3.getYear() != null) {
-            t.setYear(id3.getYear().trim());
+            t.setYear(id3.getYear().strip());
         }
 
         if (id3.getComment() != null) {
-            t.setComment(id3.getComment().trim());
+            t.setComment(id3.getComment().strip());
         }
 
         if (id3.getTrack() != null) {
             t.setTrack(id3.getTrack());
         }
 
-        if (id3.getAlbum() != null && t.getRelease().stream().noneMatch(r -> r.getName().equals(id3.getAlbum().trim()))) {
+        if (id3.getAlbum() != null && t.getRelease().stream().noneMatch(r -> r.getName().equals(id3.getAlbum().strip()))) {
             t.addRelease(findReleaseOrCreate(id3.getAlbum()));
         }
 
-        if (id3.getArtist() != null && t.getArtist().stream().noneMatch(r -> r.getName().equals(id3.getArtist().trim()))) {
+        if (id3.getArtist() != null && t.getArtist().stream().noneMatch(r -> r.getName().equals(id3.getArtist().strip()))) {
             t.addArtist(findArtistOrCreate(id3.getArtist()));
         }
 
@@ -145,7 +150,7 @@ public class MetadataService {
     }
 
     private Release findReleaseOrCreate(final String albumTitle) {
-        String trimmedTitle = albumTitle.trim();
+        String trimmedTitle = albumTitle.strip();
         var release = releaseRepository.findByName(trimmedTitle);
         if (release != null) {
             return release;
@@ -154,7 +159,7 @@ public class MetadataService {
     }
 
     private Artist findArtistOrCreate(final String name) {
-        String trimmedTitle = name.trim();
+        String trimmedTitle = name.strip();
 
         var artist = artistRepository.findByName(trimmedTitle);
         if (artist != null) {
@@ -170,6 +175,12 @@ public class MetadataService {
     }
 
     public void populateMetadata(final Long sourceId) {
-        populateFileMetadataAndCreateTracksForFiles(audioFileService.getAudioFilesBySource(sourceId));
+//        .getAudioFilesBySource(sourceId)
+        populateFileMetadataAndCreateTracksForFiles(audioFileService.getAudioFiles());
+    }
+
+
+    public Collection<Track> search(final String searchCriteria) {
+        return trackRepository.findByTitleLike(searchCriteria);
     }
 }

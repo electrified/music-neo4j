@@ -20,8 +20,8 @@ subprojects {
     group 'org.maidavale.music'
     version '1.0-SNAPSHOT'
 
-    sourceCompatibility = 10
-    targetCompatibility = 10
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
     repositories {
         mavenCentral()
