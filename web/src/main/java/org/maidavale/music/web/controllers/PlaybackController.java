@@ -13,11 +13,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import static java.net.URLConnection.*;
+import static java.net.URLConnection.guessContentTypeFromName;
 import static org.apache.commons.io.IOUtils.copy;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@RequestMapping("/playback")
 public class PlaybackController {
     private final AudioFileService audioFileService;
     private final MetadataService metadataService;
