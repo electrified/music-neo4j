@@ -4,3 +4,4 @@
 *.class
 out
 build
+/web/src/main/resources/application-dev.yml
