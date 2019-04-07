@@ -10,6 +10,11 @@ This is a Java 10/Gradle/Spring Boot/Spring Data project built to improve my und
 
 This is a work in progress so there are hardcoded paths in the code which you will need to change
 
+## Additional goals
+    - OAUTH2 /OIDC connect based authentication, in both backend and frontend, using hybrid authentication flow.
+    - Initially thought about using Keycloak, now looking at Okta instead.
+    - Do not want to incorporate any custom libraries (e.g. keycloak client, or the Okta client)
+
 ## TODO
 
 - Add real web interface with search ability
