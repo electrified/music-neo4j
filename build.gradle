@@ -1,5 +1,5 @@
 ext {
-    springVersion = '2.1.3.RELEASE'
+    springVersion = '2.1.4.RELEASE'
 }
 
 apply plugin: "com.github.ben-manes.versions"

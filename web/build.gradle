@@ -1,5 +1,5 @@
 plugins {
-    id "org.springframework.boot" version '2.1.3.RELEASE'
+    id "org.springframework.boot" version '2.1.4.RELEASE'
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -13,9 +13,10 @@ dependencies {
     compile (group: 'org.springframework.boot', name: 'spring-boot-starter-security')
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
 
-//    compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.1.4.RELEASE'
-    
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools'
+    
+    compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.3.5.RELEASE'
+
 
     compile group: 'org.springframework.security', name: 'spring-security-oauth2-client'
     compile group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
