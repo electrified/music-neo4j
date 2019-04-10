@@ -179,7 +179,6 @@ public class MetadataService {
         populateFileMetadataAndCreateTracksForFiles(audioFileService.getAudioFiles());
     }
 
-
     public Collection<Track> search(final String searchCriteria) {
         return trackRepository.findByTitleLike(searchCriteria);
     }

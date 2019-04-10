@@ -7,22 +7,20 @@ apply plugin: 'io.spring.dependency-management'
 dependencies {
     compile project(':persistence')
 
-    compile (group: 'org.springframework.data', name: 'spring-data-rest-webmvc')
-    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-web')
-    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-actuator')
-    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-security')
+    compile group: 'org.springframework.data', name: 'spring-data-rest-webmvc'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
 
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools'
     
-    compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.3.5.RELEASE'
-
-
+//    compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2'
     compile group: 'org.springframework.security', name: 'spring-security-oauth2-client'
     compile group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
-
+    compile group: 'org.springframework.security', name: 'spring-security-oauth2-resource-server'
+    
     compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-//    compile group: 'org.apache.tomcat', name: 'tomcat-annotations-api', version:'9.0.17'
     compile (group: 'com.google.guava', name: 'guava', version: '27.1-jre') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
     }

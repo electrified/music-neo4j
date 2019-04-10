@@ -1,11 +1,13 @@
 package org.maidavale.music.web.controllers;
 
+import org.maidavale.music.persistence.domain.Track;
 import org.maidavale.music.persistence.services.AudioFileService;
 import org.maidavale.music.persistence.services.MetadataService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +15,7 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Collection;
 
 import static java.net.URLConnection.guessContentTypeFromName;
 import static org.apache.commons.io.IOUtils.copy;
@@ -42,7 +45,6 @@ public class PlaybackController {
             mimeType = "application/octet-stream";
         }
 
-
         response.setContentType(mimeType);
 
         response.setHeader("Content-Disposition", String.format("inline; filename=\"%d\"", id));
@@ -51,5 +53,10 @@ public class PlaybackController {
 
         copy(new BufferedInputStream(new FileInputStream(path.toString())), response.getOutputStream());
         response.flushBuffer();
+    }
+
+    @RequestMapping("/search")
+    public Collection<Track> search(@RequestParam("query") final String searchCriteria) {
+        return metadataService.search(searchCriteria);
     }
 }
