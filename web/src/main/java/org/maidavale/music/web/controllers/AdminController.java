@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
-@PreAuthorize("hasAuthority('administrators')")
-//@CrossOrigin(origins = "*")
+@PreAuthorize("principal.claims['groups'].contains('administrators')")
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/admin")

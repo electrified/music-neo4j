@@ -20,7 +20,7 @@ import java.util.Collection;
 import static java.net.URLConnection.guessContentTypeFromName;
 import static org.apache.commons.io.IOUtils.copy;
 
-@PreAuthorize("hasAuthority('listeners')")
+@PreAuthorize("principal.claims['groups'].contains('listeners')")
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/playback")

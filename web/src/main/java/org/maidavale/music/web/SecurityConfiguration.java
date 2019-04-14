@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @EnableWebSecurity(debug = true)
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -32,10 +32,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .csrf().disable()
 //                    .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
 //                        .and()
-                    .authorizeRequests()
-                        .antMatchers("/ws/**").permitAll()
-                        .anyRequest().authenticated()
-                        .and()
+//                    .authorizeRequests()
+//                        .antMatchers("/ws/**").permitAll()
+//                        .anyRequest().authenticated()
+//                        .and()
                     .oauth2Login()
                         .and()
                     .oauth2ResourceServer()
