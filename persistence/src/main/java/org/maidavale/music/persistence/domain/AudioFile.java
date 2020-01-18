@@ -1,5 +1,6 @@
 package org.maidavale.music.persistence.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.Index;
@@ -23,6 +24,7 @@ public class AudioFile {
     private Boolean hasId3v1Tag;
     private Boolean hasId3v2Tag;
 
+    @JsonIgnore
     @Relationship(type = "FILE_TO_TRACK")
     private Track track;
 

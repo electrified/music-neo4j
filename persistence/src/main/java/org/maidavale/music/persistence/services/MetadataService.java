@@ -10,15 +10,19 @@ import org.maidavale.music.persistence.domain.Artist;
 import org.maidavale.music.persistence.domain.AudioFile;
 import org.maidavale.music.persistence.domain.Release;
 import org.maidavale.music.persistence.domain.Track;
+import org.maidavale.music.persistence.dto.ArtistWithTrackCount;
 import org.maidavale.music.persistence.repositories.ArtistRepository;
 import org.maidavale.music.persistence.repositories.ReleaseRepository;
 import org.maidavale.music.persistence.repositories.TrackRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 @Service
 public class MetadataService {
@@ -151,9 +155,9 @@ public class MetadataService {
 
     private Release findReleaseOrCreate(final String albumTitle) {
         String trimmedTitle = albumTitle.strip();
-        var release = releaseRepository.findByName(trimmedTitle);
-        if (release != null) {
-            return release;
+        var releases = releaseRepository.findByName(trimmedTitle);
+        if (releases.size() > 0) {
+            return releases.stream().findFirst().get();
         }
         return new Release(trimmedTitle);
     }
@@ -161,9 +165,9 @@ public class MetadataService {
     private Artist findArtistOrCreate(final String name) {
         String trimmedTitle = name.strip();
 
-        var artist = artistRepository.findByName(trimmedTitle);
-        if (artist != null) {
-            return artist;
+        var artists = artistRepository.findByName(trimmedTitle);
+        if (artists.size() > 0) {
+            return artists.stream().findFirst().get();
         }
         return new Artist(trimmedTitle);
     }
@@ -181,5 +185,13 @@ public class MetadataService {
 
     public Collection<Track> search(final String searchCriteria) {
         return trackRepository.findByTitleLike(searchCriteria);
+    }
+
+    public Collection<ArtistWithTrackCount> getArtists() {
+        return artistRepository.findMostPopularArtists();
+    }
+
+    public Collection<Track> getTracksByArtist(int id) {
+        return trackRepository.findByArtistId(id);
     }
 }

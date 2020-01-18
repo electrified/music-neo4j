@@ -10,5 +10,5 @@ public interface ReleaseRepository extends Neo4jRepository<Release, Long> {
 
     Collection<Release> findByNameLike(@Param("name") final String name);
 
-    Release findByName(@Param("name") final String name);
+    Collection<Release> findByName(@Param("name") final String name);
 }

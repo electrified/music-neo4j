@@ -6,6 +6,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface AudioFileRepository extends Neo4jRepository<AudioFile, Long> {
 
@@ -14,4 +15,6 @@ public interface AudioFileRepository extends Neo4jRepository<AudioFile, Long> {
 
     @Query("MATCH (n:`AudioFile`) MATCH (m0:Source) WHERE id(m0) = {sourceId} WITH n RETURN n,[ [ (n)-[r_s1:`STORED_ON`]->(s1:`Source`) | [ r_s1, s1 ] ], [ (n)-[r_f1:`FILE_TO_TRACK`]->(t1:`Track`) | [ r_f1, t1 ] ] ]")
     Collection<AudioFile> findBySource(@Param("sourceId") Long sourceId);
+
+    Collection<AudioFile> findByTrackId(final Long id);
 }

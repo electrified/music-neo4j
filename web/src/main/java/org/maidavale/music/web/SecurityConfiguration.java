@@ -30,6 +30,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .and()
                 .authorizeRequests()
+                .antMatchers("/audio/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer()

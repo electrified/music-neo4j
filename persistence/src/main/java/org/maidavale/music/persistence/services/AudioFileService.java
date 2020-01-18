@@ -93,6 +93,7 @@ public class AudioFileService {
         try {
             Files.walk(documentRootPath, FileVisitOption.FOLLOW_LINKS)
 //                    .parallel()
+                    .filter(Files::isReadable)
                     .filter(Files::isRegularFile)
                     .filter(filter::matches)
                     .forEach(f -> addFile(src, calculateRelativePath(documentRootPath, f)));
@@ -101,8 +102,8 @@ public class AudioFileService {
         }
     }
 
-    public Optional<AudioFile> getFileById(final Long id) {
-        return audioFileRepository.findById(id);
+    public Optional<AudioFile> getFileByTrackId(final Long id) {
+        return audioFileRepository.findByTrackId(id).stream().findFirst();
     }
 
     public Iterable<Source> getSources() {

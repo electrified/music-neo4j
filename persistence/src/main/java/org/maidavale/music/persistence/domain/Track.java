@@ -4,6 +4,7 @@ import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.cypher.query.SortOrder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class Track {
     private String comment;
     private Long length;
 
-    @Relationship(type = "FILE_TO_TRACK")
+    @Relationship(type = "FILE_TO_TRACK", direction = "INCOMING")
     private Set<AudioFile> files;
 
     public Long getId() {

@@ -1,6 +1,7 @@
 package org.maidavale.music.web.controllers;
 
 import org.maidavale.music.persistence.domain.Track;
+import org.maidavale.music.persistence.dto.ArtistWithTrackCount;
 import org.maidavale.music.persistence.services.AudioFileService;
 import org.maidavale.music.persistence.services.MetadataService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,38 +26,25 @@ import static org.apache.commons.io.IOUtils.copy;
 @RestController
 @RequestMapping("/playback")
 public class PlaybackController {
-    private final AudioFileService audioFileService;
+
     private final MetadataService metadataService;
 
-    public PlaybackController(final AudioFileService audioFileService, final MetadataService metadataService) {
-        this.audioFileService = audioFileService;
+    public PlaybackController(final MetadataService metadataService) {
         this.metadataService = metadataService;
-    }
-
-    @RequestMapping(value ="/play/{id}", produces = "audio/*")
-    public void play(@PathVariable(value="id") final Long id, final HttpServletResponse response) throws IOException {
-        var audioFile =  audioFileService.getFileById(id);
-
-        final var path = Paths.get(audioFile.get().getSource().getPath() + "/" + audioFile.get().getRelativePath());
-
-        String mimeType = guessContentTypeFromName(path.toString());
-        if (mimeType == null) {
-            //unknown mimetype so set the mimetype to application/octet-stream
-            mimeType = "application/octet-stream";
-        }
-
-        response.setContentType(mimeType);
-
-        response.setHeader("Content-Disposition", String.format("inline; filename=\"%d\"", id));
-
-//        response.setContentLength((int) path.length());
-
-        copy(new BufferedInputStream(new FileInputStream(path.toString())), response.getOutputStream());
-        response.flushBuffer();
     }
 
     @RequestMapping("/search")
     public Collection<Track> search(@RequestParam("query") final String searchCriteria) {
         return metadataService.search(searchCriteria);
+    }
+
+    @RequestMapping("/artists")
+    public Collection<ArtistWithTrackCount> getArtists() {
+        return metadataService.getArtists();
+    }
+
+    @RequestMapping("/artists/{artistId}/tracks")
+    public Collection<Track> getTracksByArtist(@PathVariable("artistId") final int artistId) {
+        return metadataService.getTracksByArtist(artistId);
     }
 }
