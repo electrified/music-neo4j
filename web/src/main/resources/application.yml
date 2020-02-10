@@ -11,13 +11,13 @@ logging:
 spring:
   thymeleaf:
     cache: false
-  security:
-    oauth2:
-      client:
-        registration:
-          okta:
-            client-id: replace-me
-            client-secret: replace-me
-        provider:
-          okta:
-            issuer-uri: replace-me
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          okta:
+#            client-id: replace-me
+#            client-secret: replace-me
+#        provider:
+#          okta:
+#            issuer-uri: replace-me

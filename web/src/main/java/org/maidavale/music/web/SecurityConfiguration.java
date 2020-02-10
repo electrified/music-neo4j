@@ -22,24 +22,24 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @EnableWebSecurity(debug = true)
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
                 http.cors().and()
-                    .csrf().disable()
+                    .csrf().disable();
 //                    .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
 //                        .and()
 //                    .authorizeRequests()
 //                        .antMatchers("/ws/**").permitAll()
 //                        .anyRequest().authenticated()
 //                        .and()
-                    .oauth2Login()
-                        .and()
-                    .oauth2ResourceServer()
-                        .jwt();
+//                    .oauth2Login()
+//                        .and()
+//                    .oauth2ResourceServer()
+//                        .jwt();
     }
 
     @Bean
@@ -56,18 +56,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Bean
-    public GrantedAuthoritiesMapper userAuthoritiesMapper() {
-        return (authorities) -> {
-            Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
-            authorities.forEach(authority -> {
-                if (OidcUserAuthority.class.isInstance(authority)) {
-                    OidcUserAuthority oidcUserAuthority = (OidcUserAuthority)authority;
-                    List<String> groups = (List<String>)oidcUserAuthority.getUserInfo().getClaims().get("groups");
-                    mappedAuthorities.addAll(groups.stream().map(group -> new SimpleGrantedAuthority(group)).collect(Collectors.toSet()));
-                }
-            });
-            return mappedAuthorities;
-        };
-    }
+//    @Bean
+//    public GrantedAuthoritiesMapper userAuthoritiesMapper() {
+//        return (authorities) -> {
+//            Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
+//            authorities.forEach(authority -> {
+//                if (OidcUserAuthority.class.isInstance(authority)) {
+//                    OidcUserAuthority oidcUserAuthority = (OidcUserAuthority)authority;
+//                    List<String> groups = (List<String>)oidcUserAuthority.getUserInfo().getClaims().get("groups");
+//                    mappedAuthorities.addAll(groups.stream().map(group -> new SimpleGrantedAuthority(group)).collect(Collectors.toSet()));
+//                }
+//            });
+//            return mappedAuthorities;
+//        };
+//    }
 }
