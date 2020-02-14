@@ -11,13 +11,10 @@ logging:
 spring:
   thymeleaf:
     cache: false
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          okta:
-#            client-id: replace-me
-#            client-secret: replace-me
-#        provider:
-#          okta:
-#            issuer-uri: replace-me
+#  profiles:
+#    active: @spring.profiles.active@
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-181381.okta.com/oauth2/default

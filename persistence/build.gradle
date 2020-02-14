@@ -1,9 +1,10 @@
 dependencies {
-    compile "org.springframework.boot:spring-boot-starter-data-jpa:$rootProject.ext.springVersion"
     compile ("org.springframework.boot:spring-boot-starter-data-neo4j:$rootProject.ext.springVersion") {
         exclude group:'javax.annotation', module: 'javax.annotation-api'
         exclude group:'org.springframework.boot', module: 'spring-boot-starter-tomcat'
     }
+    compile group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+
     compile 'org.neo4j.driver:neo4j-java-driver:4.0.0'
     compile 'com.mpatric:mp3agic:0.9.1'
     compile (group: 'com.google.guava', name: 'guava', version: '28.2-jre') {

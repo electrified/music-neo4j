@@ -26,15 +26,6 @@ subprojects {
     repositories {
         mavenCentral()
     }
-
-    dependencies {
-//        testCompile group: 'junit', name: 'junit', version: '4.12'
-        
-        // See https://groups.google.com/forum/#!topic/trellis-ldp/kFBa-5Zl2ME
-//        implementation ("org.apache.commons:commons-lang3:3.8.1") {force = true}
-//        implementation ("commons-io:commons-io:2.6") {force = true}
-//        implementation ("com.fasterxml.jackson.core:jackson-databind:2.9.8") {force = true}
-    }
     
 //compileJava {
 //    inputs.property("moduleName", moduleName)
