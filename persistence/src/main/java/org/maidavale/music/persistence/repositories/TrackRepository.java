@@ -14,4 +14,7 @@ public interface TrackRepository extends Neo4jRepository<Track, Long> {
 
     @Query("MATCH (n:Track)-[:BY]->(a:Artist) where id(a) = {id} RETURN n, [ [ (n)-[r_b1:`BY`]->(a1:`Artist`) | [ r_b1, a1 ] ], [ (n)-[r_a1:`APPEARS_ON`]->(r1:`Release`) | [ r_a1, r1 ] ], [ (a1:`AudioFile`)-[r_f1:`FILE_TO_TRACK`]->(n) | [ r_f1, a1 ] ] ]")
     Collection<Track> findByArtistId(@Param("id") final int id);
+
+    @Query("MATCH (n:Track) WHERE NOT (n:Track)--(:AudioFile) DETACH DELETE n")
+    void deleteLooseTracks();
 }

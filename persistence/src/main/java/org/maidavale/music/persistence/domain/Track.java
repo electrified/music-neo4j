@@ -26,7 +26,7 @@ public class Track {
     private Long length;
 
     @Relationship(type = "FILE_TO_TRACK", direction = "INCOMING")
-    private Set<AudioFile> files;
+    private Set<AudioFile> files = new HashSet<>();
 
     public Long getId() {
         return id;

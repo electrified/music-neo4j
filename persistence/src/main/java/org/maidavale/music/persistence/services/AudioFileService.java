@@ -2,6 +2,7 @@ package org.maidavale.music.persistence.services;
 
 import org.maidavale.music.persistence.domain.AudioFile;
 import org.maidavale.music.persistence.domain.Source;
+import org.maidavale.music.persistence.domain.Track;
 import org.maidavale.music.persistence.repositories.AudioFileRepository;
 import org.maidavale.music.persistence.repositories.SourceRepository;
 import org.maidavale.music.persistence.repositories.TrackRepository;
@@ -46,16 +47,11 @@ public class AudioFileService {
     }
 
     void updateFile(final AudioFile audioFile) {
+        LOG.info("Saving AudioFile {}", audioFile.getId());
         audioFileRepository.save(audioFile);
         if (audioFile.getTrack() != null) {
-            trackRepository.save(audioFile.getTrack());
-        }
-    }
-
-    public void deleteSource(final String path) {
-        var source = sourceRepository.findByPath(path);
-        if (source != null) {
-            sourceRepository.delete(source);
+            Track t = trackRepository.save(audioFile.getTrack());
+            LOG.info("Saved associated track id {}", t.getId());
         }
     }
 
@@ -112,5 +108,10 @@ public class AudioFileService {
 
     public Iterable<AudioFile> getAudioFilesBySource(final Long sourceId) {
         return audioFileRepository.findBySource(sourceId);
+    }
+
+    public void deleteSourceAndFiles(final Long sourceId) {
+        sourceRepository.deleteSource(sourceId);
+        trackRepository.deleteLooseTracks();
     }
 }

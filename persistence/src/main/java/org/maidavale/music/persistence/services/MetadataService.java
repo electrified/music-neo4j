@@ -58,9 +58,9 @@ public class MetadataService {
 
     private void analyseMp3(final AudioFile file) {
         try {
-            String path = file.getSource().getPath() + "/" + file.getRelativePath();
+            final String path = file.getSource().getPath() + "/" + file.getRelativePath();
 
-            Mp3File mp3file = new Mp3File(path);
+            final Mp3File mp3file = new Mp3File(path);
 
             LOG.info("Length of this mp3 is: " + mp3file.getLengthInSeconds() + " seconds");
             LOG.info("Bitrate: " + mp3file.getBitrate() + " kbps " + (mp3file.isVbr() ? "(VBR)" : "(CBR)"));
@@ -82,6 +82,7 @@ public class MetadataService {
             if (tag != null) {
                 constructTrackFromId3(tag, mp3file, t);
                 file.setTrack(t);
+                t.getFiles().add(file);
             }
 
         } catch (IOException | UnsupportedTagException | InvalidDataException | IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
@@ -179,8 +180,7 @@ public class MetadataService {
     }
 
     public void populateMetadata(final Long sourceId) {
-//        .getAudioFilesBySource(sourceId)
-        populateFileMetadataAndCreateTracksForFiles(audioFileService.getAudioFiles());
+        populateFileMetadataAndCreateTracksForFiles(audioFileService.getAudioFilesBySource(sourceId));
     }
 
     public Collection<Track> search(final String searchCriteria) {

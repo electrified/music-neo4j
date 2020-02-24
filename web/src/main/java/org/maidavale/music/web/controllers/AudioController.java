@@ -28,25 +28,29 @@ public class AudioController {
         this.audioFileService = audioFileService;
     }
 
-    @RequestMapping(value ="/play/{id}", produces = "audio/*")
+    @RequestMapping(value ="/play/{id}") //, produces = "audio/*"
     public void play(@PathVariable(value="id") final Long id, final HttpServletResponse response) throws IOException {
-        var audioFile =  audioFileService.getFileByTrackId(id);
+        var audioFile = audioFileService.getFileByTrackId(id);
 
-        final var path = Paths.get(audioFile.get().getSource().getPath() + "/" + audioFile.get().getRelativePath());
+        if (audioFile.isPresent()) {
+            var file = audioFile.get();
+            final var path = Paths.get(file.getSource().getPath() + "/" + file.getRelativePath());
 
-        String mimeType = guessContentTypeFromName(path.toString());
-        if (mimeType == null) {
-            //unknown mimetype so set the mimetype to application/octet-stream
-            mimeType = "application/octet-stream";
-        }
+            String mimeType = guessContentTypeFromName(path.toString());
+            if (mimeType == null) {
+                //unknown mimetype so set the mimetype to application/octet-stream
+                mimeType = "application/octet-stream";
+            }
 
-        response.setContentType(mimeType);
+            response.setContentType(mimeType);
 
-        response.setHeader("Content-Disposition", String.format("inline; filename=\"%d\"", id));
+            response.setHeader("Content-Disposition", String.format("inline; filename=\"%d\"", id));
 
 //        response.setContentLength((int) path.length());
 
-        copy(new BufferedInputStream(new FileInputStream(path.toString())), response.getOutputStream());
-        response.flushBuffer();
+            copy(new BufferedInputStream(new FileInputStream(path.toString())), response.getOutputStream());
+            response.flushBuffer();
+        }
+
     }
 }

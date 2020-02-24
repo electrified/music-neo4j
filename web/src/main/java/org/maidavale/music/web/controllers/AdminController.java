@@ -50,7 +50,8 @@ public class AdminController {
 
     @DeleteMapping("sources/{sourceId}")
     public ResponseEntity deleteSource(@PathVariable("sourceId") final Long sourceId) {
-        throw new NotImplementedException("todo");
+        audioFileService.deleteSourceAndFiles(sourceId);
+        return new ResponseEntity(sourceId, HttpStatus.OK);
     }
 
     @PostMapping("sources/{sourceId}/scan")
