@@ -1,11 +1,7 @@
 package org.maidavale.music.persistence.services;
 
 import com.google.common.collect.Streams;
-import com.mpatric.mp3agic.ID3v1;
-import com.mpatric.mp3agic.ID3v2;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
+import com.mpatric.mp3agic.*;
 import org.maidavale.music.persistence.domain.Artist;
 import org.maidavale.music.persistence.domain.AudioFile;
 import org.maidavale.music.persistence.domain.Release;
@@ -16,13 +12,10 @@ import org.maidavale.music.persistence.repositories.ReleaseRepository;
 import org.maidavale.music.persistence.repositories.TrackRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
 
 @Service
 public class MetadataService {
@@ -39,6 +32,46 @@ public class MetadataService {
         this.releaseRepository = releaseRepository;
         this.trackRepository = trackRepository;
         this.artistRepository = artistRepository;
+    }
+
+    public void populateMetadata(final Long sourceId) {
+        populateFileMetadataAndCreateTracksForFiles(audioFileService.getAudioFilesBySource(sourceId));
+    }
+
+    public Collection<Track> search(final String searchCriteria) {
+        return trackRepository.findByTitleLike(searchCriteria);
+    }
+
+    public Collection<ArtistWithTrackCount> getArtists() {
+        return artistRepository.findMostPopularArtists();
+    }
+
+    public Collection<Track> getTracksByArtist(int id) {
+        return trackRepository.findByArtistId(id);
+    }
+
+    private static ID3v1 getTagFromFile(Mp3File mp3file) {
+        ID3v1 tag = null;
+        if (mp3file.hasId3v1Tag() && mp3file.hasId3v2Tag()) {
+            ID3v2 id3v2Tag = mp3file.getId3v2Tag();
+            ID3v1 id3v1Tag = mp3file.getId3v1Tag();
+
+            if (id3v2Tag.getTitle() == null) {
+                LOG.info("Using ID3 v1");
+                tag = id3v1Tag;
+            } else  if (id3v1Tag.getTitle() == null){
+                LOG.info("Using ID3 v2");
+                tag = id3v2Tag;
+            } else {
+                tag = id3v2Tag.getTitle().length() >= id3v1Tag.getTitle().length() ? id3v2Tag : id3v1Tag;
+            }
+        } else if(mp3file.hasId3v1Tag()) {
+            tag = mp3file.getId3v1Tag();
+
+        } else if(mp3file.hasId3v2Tag()) {
+            tag = mp3file.getId3v2Tag();
+        }
+        return tag;
     }
 
     public void deleteAllMetadata() {
@@ -88,30 +121,6 @@ public class MetadataService {
         } catch (IOException | UnsupportedTagException | InvalidDataException | IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
-    }
-
-    private static ID3v1 getTagFromFile(Mp3File mp3file) {
-        ID3v1 tag = null;
-        if (mp3file.hasId3v1Tag() && mp3file.hasId3v2Tag()) {
-            ID3v2 id3v2Tag = mp3file.getId3v2Tag();
-            ID3v1 id3v1Tag = mp3file.getId3v1Tag();
-
-            if (id3v2Tag.getTitle() == null) {
-                LOG.info("Using ID3 v1");
-                tag = id3v1Tag;
-            } else  if (id3v1Tag.getTitle() == null){
-                LOG.info("Using ID3 v2");
-                tag = id3v2Tag;
-            } else {
-                tag = id3v2Tag.getTitle().length() >= id3v1Tag.getTitle().length() ? id3v2Tag : id3v1Tag;
-            }
-        } else if(mp3file.hasId3v1Tag()) {
-            tag = mp3file.getId3v1Tag();
-
-        } else if(mp3file.hasId3v2Tag()) {
-            tag = mp3file.getId3v2Tag();
-        }
-        return tag;
     }
 
     private void constructTrackFromId3(final ID3v1 id3, final Mp3File file, final Track t) {
@@ -179,19 +188,4 @@ public class MetadataService {
                 .forEach(audioFileService::updateFile);
     }
 
-    public void populateMetadata(final Long sourceId) {
-        populateFileMetadataAndCreateTracksForFiles(audioFileService.getAudioFilesBySource(sourceId));
-    }
-
-    public Collection<Track> search(final String searchCriteria) {
-        return trackRepository.findByTitleLike(searchCriteria);
-    }
-
-    public Collection<ArtistWithTrackCount> getArtists() {
-        return artistRepository.findMostPopularArtists();
-    }
-
-    public Collection<Track> getTracksByArtist(int id) {
-        return trackRepository.findByArtistId(id);
-    }
 }
